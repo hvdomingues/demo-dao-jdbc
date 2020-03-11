@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import db.DB;
@@ -71,6 +72,47 @@ public class SellerDaoJDBC implements SellerDao {
 
 		return null;
 	}
+	
+	@Override
+	public List<Seller> findByDepartmentId(Integer departmentId) {
+		
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try {
+			st = conn.prepareStatement("SELECT seller.*,department.Name as DepName "
+					 + "FROM seller INNER JOIN department "
+					 + "ON seller.DepartmentId = department.Id "
+					 + "WHERE DepartmentId = ? "
+					 + "ORDER BY Name");
+			
+			st.setInt(1, departmentId);
+			
+			Department dep = new Department();
+			
+			rs = st.executeQuery();
+			
+			List<Seller> list  = new ArrayList<>();
+			
+			while (rs.next()) {
+				if(dep == null) {
+					dep = instantiateDepartment(rs);
+				}
+				Seller sell = instantiateSeller(dep, rs);
+				list.add(sell);
+				
+			}
+			
+			return list;
+			
+			
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}		
+	}
 
 	private Department instantiateDepartment(ResultSet rs) throws SQLException {
 
@@ -95,5 +137,7 @@ public class SellerDaoJDBC implements SellerDao {
 		return sell;
 
 	}
+
+
 
 }
