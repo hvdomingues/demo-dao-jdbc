@@ -29,10 +29,8 @@ public class SellerDaoJDBC implements SellerDao {
 
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("INSERT INTO seller " + 
-					"(Name, Email, BirthDate, BaseSalary, DepartmentId) "
-					+ "VALUES " 
-					+ "(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+			st = conn.prepareStatement("INSERT INTO seller " + "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+					+ "VALUES " + "(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, sell.getName());
 			st.setString(2, sell.getEmail());
@@ -53,11 +51,9 @@ public class SellerDaoJDBC implements SellerDao {
 				throw new DbException("Unexpected error! No rows affected!");
 			}
 
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 		}
 	}
@@ -66,9 +62,8 @@ public class SellerDaoJDBC implements SellerDao {
 	public void update(Seller sell) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("UPDATE seller " 
-					+ "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? "
-					+ "WHERE Id = ? ");
+			st = conn.prepareStatement("UPDATE seller "
+					+ "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? " + "WHERE Id = ? ");
 
 			st.setString(1, sell.getName());
 			st.setString(2, sell.getEmail());
@@ -79,18 +74,28 @@ public class SellerDaoJDBC implements SellerDao {
 
 			st.executeUpdate();
 
-
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 		}
 	}
 
 	@Override
 	public void deleteById(Integer id) {
+
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("DELETE FROM seller WHERE id = ?");
+
+			st.setInt(1, id);
+
+			st.executeUpdate();
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
 
 	}
 
